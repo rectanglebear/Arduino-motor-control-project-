@@ -1,0 +1,150 @@
+
+  /********************************************
+ *    triangle bear code engine control     *
+ *                                          *
+ *   programmer : Bandon Rodriguez          *   
+ *                                          *
+ *   For arduino                            *
+ ********************************************
+ 
+ This code will start a dc motor , 
+ 
+ */
+#include <LiquidCrystal.h> // using the lcd library for use with the lcd screen
+
+// Initialize the library with the pins we're using.
+
+// constants won't change. They're used here to 
+// set pin numbers:
+// main on/off button pin 
+const int buttonPin = 8;    // the number of the pushbutton pin
+// pins for rgb light used for
+const int RED_PIN = 9;
+const int GREEN_PIN = 10;
+const int BLUE_PIN = 11;
+// pins used for motor 
+const int motorPin = 11;
+ int motorSpeed;
+//potentiometer p
+const int potentPin = 0;
+
+// LCD variables
+LiquidCrystal lcd(13,12,5,4,3,2);
+//Variables will change:
+int ledStateR = HIGH;
+int  ledStateG = HIGH ; 
+int ledStateB = LOW ;// the current state of the output pin
+int buttonState;             // the current reading from the input pin
+int lastButtonState = LOW;   // the previous reading from the input pin
+
+
+void setup() {
+  pinMode(buttonPin, INPUT);
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+
+  // set initial LED state
+  digitalWrite(RED_PIN, ledStateR);
+  digitalWrite(GREEN_PIN, ledStateG);
+  digitalWrite(BLUE_PIN, ledStateB);
+  // set initial lcd screen size 
+  lcd.begin(16, 2);
+  // set initial motor pin 
+  pinMode(motorPin, OUTPUT);
+  // 
+}
+
+void loop() {
+  // a variable where the potentiaomter value will be stored 
+ 
+
+
+  
+  // the if statements where the main code will be written for the motor control and led control 
+  if (buttonState == HIGH)// button NOT pressed 
+  {
+    off();
+  }
+  if ( buttonState == LOW)// button IS pressed 
+  {
+    on();  
+
+  }
+}
+
+void ledConfig() 
+{
+  digitalWrite(RED_PIN, ledStateR);
+  digitalWrite(GREEN_PIN, ledStateG);
+  digitalWrite(BLUE_PIN, ledStateB);
+}
+void red() 
+{
+  ledStateR = HIGH ;
+  ledStateG = LOW ;
+  ledStateB = LOW ;
+}
+void green ()
+{
+  ledStateR = LOW ; 
+  ledStateG = HIGH ;
+  ledStateB = LOW ;  
+}
+void on()// this will be the code that will happen when the button is pressed 
+{
+  green();
+  ledConfig();
+   int sensorValue;
+  while (buttonState == LOW)
+  {
+    sensorValue = analogRead(potentPin);
+motorSpeed = (sensorValue);
+
+    lcd.print("the device is on " ) ; 
+    delay(2000);
+    digitalWrite(motorPin, motorSpeed); // turns motor on highest setting 
+    lcd.clear() ;
+    lcd.print("speed is");
+    delay(1000);
+
+    lcd.clear() ;
+    lcd.print(motorSpeed);
+    buttonState = digitalRead(buttonPin);
+    delay(2000);
+    buttonState = digitalRead(buttonPin);
+    lcd.clear() ;
+    digitalWrite(motorPin, HIGH); // turns motor on highest setting 
+
+
+
+
+  }
+}
+void off() 
+{
+  red();
+  ledConfig() ;
+
+  while(buttonState == HIGH)
+  {
+    digitalWrite(motorPin, LOW);
+    lcd.print ("system is off " );
+    delay(2000); 
+    buttonState = digitalRead(buttonPin);
+    lcd.clear();
+    lcd.print( "hold button down" ) ;
+    delay(2000) ;
+    buttonState = digitalRead(buttonPin);
+    lcd.clear();
+    lcd.print("to begin");
+    delay(2000);
+    buttonState = digitalRead(buttonPin);
+    lcd.clear() ;
+
+
+
+
+  }
+}
+
